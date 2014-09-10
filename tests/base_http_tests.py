@@ -138,7 +138,7 @@ class BaseHttpTests(BaseTest):
 
     def test_number_param_passed_plugins(self):
         self.add_argv(self.param_plugins)
-        self.add_argv(['--number', '30', '--method', 'forbidden'])
+        self.add_argv(['--plugins-number', '30', '--method', 'forbidden'])
 
         m = self.mock_controller('drupal', 'plugins_get')
         self.app.run()
@@ -147,7 +147,7 @@ class BaseHttpTests(BaseTest):
 
     def test_number_param_passed_themes(self):
         self.add_argv(self.param_themes)
-        self.add_argv(['--number', '30', '--method', 'forbidden'])
+        self.add_argv(['--themes-number', '30', '--method', 'forbidden'])
 
         m = self.mock_controller('drupal', 'themes_get')
         self.app.run()
@@ -363,4 +363,3 @@ class BaseHttpTests(BaseTest):
                 Verb.head)
 
         assert result == base_url_https
-
