@@ -13,7 +13,7 @@ class BaseTest(test.CementTestCase):
 
     base_url = "http://adhwuiaihduhaknbacnckajcwnncwkakncw.com/"
 
-    param_base = ["--url", base_url, '--plugins-number', '10']
+    param_base = ["--url", base_url, '-n', '10']
     param_plugins = param_base + ["-e", 'p']
     param_interesting = param_base + ["-e", 'i']
     param_themes = param_base + ["-e", 't']

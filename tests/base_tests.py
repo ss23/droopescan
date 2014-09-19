@@ -87,10 +87,10 @@ class BaseTests(BaseTest):
             assert m.called, 'module %s' % m
 
     def test_fix_dereference_bug(self):
-        """
+        '''
             test for dereference that made the app fail even though
             all tests were passing.
-        """
+        '''
 
         plugins_base_url = 'plugins_base_url'
         themes_base_url = 'themes_base_url'
