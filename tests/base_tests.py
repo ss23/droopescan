@@ -99,7 +99,8 @@ class BaseTests(BaseTest):
             'plugins_base_url': plugins_base_url,
             'themes_base_url': themes_base_url,
             'scanning_method': 'a',
-            'number': 'a',
+            'number_plugins': 'a',
+            'number_themes': 'a',
             'threads': 'a',
             'verb': 'a',
             'enumerate': 'p',
@@ -131,8 +132,45 @@ class BaseTests(BaseTest):
         p.set(10, 100)
 
         a = u.get()[-4:]
-        print a, u
 
         assert a == '10%)'
         assert " ===== " in u.get()
+
+    def test_opts_default_number(self):
+        self.add_argv(['scan', 'drupal'])
+        self.add_argv(['--url', self.base_url])
+        self.add_argv(['--method', 'forbidden'])
+
+        m = self.mock_controller('drupal', '_functionality')
+
+        self.app.run()
+
+        assert m.call_args[0][0]['number_plugins'] == self.scanner.DEFAULT_NUMBER_PLUGINS
+        assert m.call_args[0][0]['number_themes'] == self.scanner.DEFAULT_NUMBER_THEMES
+
+    def test_functionality_default_number(self):
+
+        nb_plugins = 1
+        nb_themes = 2
+
+        opts = {
+            'url': self.base_url,
+            'plugins_base_url': '',
+            'themes_base_url': '',
+            'scanning_method': 'a',
+            'number_plugins': nb_plugins,
+            'number_themes': nb_themes,
+            'threads': 'a',
+            'verb': 'a',
+            'enumerate': 'p',
+        }
+
+        drupal = Drupal()
+        kwargs_list = drupal._functionality(opts)
+
+        real_nb_plugins = kwargs_list['plugins']['kwargs']['max_plugins']
+        real_nb_themes = kwargs_list['themes']['kwargs']['max_plugins']
+
+        print real_nb_plugins, real_nb_themes
+
 

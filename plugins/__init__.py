@@ -29,7 +29,8 @@ class AbstractArgumentController(controller.CementBaseController):
                     template('help_method.tpl'), choices=enum_list(ScanningMethod))),
                 (['--number', '-n'], dict(action='store', help='''Number of
                     words to attempt from the plugin/theme dictionary. Default
-                    is 1000. Use -n 'all' to use all available.''', default=1000)),
+                    is 1000 plugins an 250 themes. Use -n 'all' to use all
+                    available.''', default=-1)),
                 (['--plugins-base-url'], dict(action='store', help="""Location
                     where the plugins are stored by the CMS. Default is the CMS'
                     default location. First %%s in string will be replaced with
@@ -50,6 +51,8 @@ class BasePluginInternal(controller.CementBaseController):
 
     requests = None
     DEFAULT_UA = 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/36.0.1985.125 Safari/537.36'
+    DEFAULT_NUMBER_PLUGINS = 1000
+    DEFAULT_NUMBER_THEMES = 250
 
     class Meta:
         label = 'baseplugin'
@@ -78,7 +81,18 @@ class BasePluginInternal(controller.CementBaseController):
         pargs = self.app.pargs
 
         url = common.validate_url(pargs.url)
-        number = pargs.number if not pargs.number == 'all' else 100000
+
+        ALL = 10000000
+        if pargs.number == 'all':
+            number_plugins = ALL
+            number_themes = ALL
+        elif pargs.number == -1:
+            number_plugins = self.DEFAULT_NUMBER_PLUGINS
+            number_themes = self.DEFAULT_NUMBER_THEMES
+        else:
+            number_plugins = pargs.number
+            number_themes = pargs.number
+
         threads = pargs.threads
         enumerate = pargs.enumerate
         verb = pargs.verb
@@ -116,11 +130,13 @@ class BasePluginInternal(controller.CementBaseController):
         kwargs_base = self._base_kwargs(opts)
         kwargs_plugins = dict_combine(kwargs_base, {
             'base_url': opts['plugins_base_url'],
-            'max_plugins': opts['number']
+            'max_plugins': opts['number_plugins']
         })
 
+        # Clone and dereference.
         kwargs_themes = dict(kwargs_plugins)
         kwargs_themes['base_url'] = opts['themes_base_url']
+        kwargs_themes['max_plugins'] = opts['number_themes']
 
         all = {
             'plugins': {
