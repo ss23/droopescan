@@ -81,6 +81,7 @@ class Release(HumanBasePlugin):
             ok = self.confirm("Is that OK?")
             if ok:
                 self.prepend_to_file(CHANGELOG, final)
+                call(['git', 'checkout', 'master'])
 
                 # commit changelog.
                 call(['git', 'add', '.'])
@@ -91,6 +92,11 @@ class Release(HumanBasePlugin):
                 call(['git', 'tag', version_nb])
                 call(['git', 'push'])
                 call(['git', 'push', '--tags'])
+
+                # Go back to dev.
+                call(['git', 'checkout', 'dev'])
+
+                print "Tagged new version; added changes to master; returned to 'dev' branch."
 
             else:
                 self.error('Canceled by user')
